@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f6f8fc">
+  <meta id="theme-meta" name="theme-color" content="#f6f8fc">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Sudoku">
@@ -102,6 +102,68 @@
     .win-desc { text-align:center; }
     @media (min-width: 480px) { .app { padding-top: 36px; } .cell {font-size: 29px;} .digit{font-size:34px;} }
     @media (max-width: 370px) { .app{padding-left:11px;padding-right:11px;} .toolbar{gap:0;} .topbar{margin-bottom:17px;} .digit{min-height:51px;} .footer{margin-top:9px;} }
+
+    /* Version 2: compact controls, accessibility, and complete dark theme */
+    .game-actions{display:flex;gap:13px;align-items:center}
+    .daily-button{border:0;background:#e5f0fe;color:#246fc2;border-radius:9px;padding:7px 11px;font-weight:750;font-size:12px}
+    .daily-button.active{background:#2f7fda;color:#fff}
+    .daily-label{font-size:11px;color:#7790a8;white-space:nowrap}
+    .time-area{display:flex;align-items:center;gap:5px}
+    .pause-button{border:1px solid #d9e4f0;background:#fff;color:#547294;border-radius:7px;padding:2px 8px;line-height:1.1;font-weight:800}
+    .toolbar{gap:2px}
+    .tool{font-size:11px;gap:5px;padding:7px 0}
+    .tool svg{width:21px;height:21px}
+    .stats-caption{font-size:12px;color:#8395aa;margin:12px 0 7px!important}
+    .stats-table{font-size:12px;table-layout:fixed}
+    .stats-table th,.stats-table td{padding:9px 4px;white-space:nowrap}
+    .stats-table th:nth-child(n+2),.stats-table td:nth-child(n+2){text-align:right}
+    .stats-table th:first-child{width:33%}
+    .level-btn{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .level-btn span{margin-top:0;max-width:58%;text-align:right;line-height:1.3}
+    .button-row{display:flex;gap:8px;margin-top:12px}
+    .secondary{flex:1;border:1px solid #dce6f1;background:#f7faff;color:#386397;padding:11px;border-radius:10px;font-weight:700}
+    .danger{color:#ba4949;border-color:#f1d7d7}
+    .option-select{background:#f7faff;border:1px solid #dce6f1;color:#34445b;padding:7px;border-radius:8px;max-width:150px}
+    .update-toast{position:fixed;z-index:30;bottom:calc(15px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);white-space:nowrap;background:#273d59;color:white;border-radius:12px;padding:11px 14px;box-shadow:0 4px 20px #0003;font-size:13px}
+    .update-toast[hidden]{display:none}
+    .update-toast button{margin-left:10px;background:white;color:#2167bc;border:0;border-radius:8px;padding:6px 11px;font-weight:800}
+    .muted{color:#91a1b5;font-size:12px}
+    .helper-note{background:#f5f8fd;border-radius:10px;padding:10px;font-size:12px;color:#77889f;line-height:1.5;margin-top:12px}
+    .file-upload{display:block;text-align:center;padding:10px;border:1px solid #dce6f1;border-radius:10px;color:#386397;font-size:13px;font-weight:700;cursor:pointer}
+    .file-upload input{width:100%;margin-top:6px;font-size:12px;color:inherit}
+    @media(max-width:370px){.game-actions{gap:7px}.daily-button{padding:6px 8px}.new-game{font-size:12px}.mode{font-size:12px}.tool svg{width:19px;height:19px}}
+    body[data-theme="dark"]{background:#121a28;color:#e4ecf9}
+    body[data-theme="dark"] .tagline,body[data-theme="dark"] .mode,body[data-theme="dark"] .game-meta,body[data-theme="dark"] .statusline,body[data-theme="dark"] #status,body[data-theme="dark"] .counter,body[data-theme="dark"] .footer{color:#99abc4}
+    body[data-theme="dark"] .mode strong,body[data-theme="dark"] .new-game{color:#8fc0ff}
+    body[data-theme="dark"] .icon-btn,body[data-theme="dark"] .pause-button{background:#25344b;border-color:#394e6c;color:#c8dcf4}
+    body[data-theme="dark"] .daily-button{background:#243f64;color:#acd1ff}
+    body[data-theme="dark"] .daily-button.active{background:#3279c8;color:white}
+    body[data-theme="dark"] .sudoku-board{background:#203046;border-color:#8ba6c9}
+    body[data-theme="dark"] .cell{background:#1c2b3e;border-color:#415672;color:#88bffc}
+    body[data-theme="dark"] .cell.fixed{color:#e2ecf8}
+    body[data-theme="dark"] .cell.peer{background:#2a405c}
+    body[data-theme="dark"] .cell.same{background:#385b84}
+    body[data-theme="dark"] .cell.selected{background:#396ca4;box-shadow:inset 0 0 0 2px #8ec1ff}
+    body[data-theme="dark"] .cell.wrong:not(.selected){background:#5b303b;color:#ffb6b6}
+    body[data-theme="dark"] .cell.wrong.selected{color:#ff9c9c}
+    body[data-theme="dark"] .notes{color:#9eb9da}
+    body[data-theme="dark"] .tool{color:#a8c4e7}
+    body[data-theme="dark"] .tool.active{background:#263e5d;border-color:#507bac;color:#a9d1ff}
+    body[data-theme="dark"] .digit{color:#9bcbff}
+    body[data-theme="dark"] .digit:hover,body[data-theme="dark"] .digit:active{background:#293d58}
+    body[data-theme="dark"] .digit small{color:#788da6}
+    body[data-theme="dark"] .dialog{background:#1e2c40;color:#e2edf9}
+    body[data-theme="dark"] .dialog p,body[data-theme="dark"] .stats-caption,body[data-theme="dark"] .muted{color:#a6b7cc}
+    body[data-theme="dark"] .close,body[data-theme="dark"] .stat-card,body[data-theme="dark"] .helper-note{background:#2c3d55;color:#d4e4f8}
+    body[data-theme="dark"] .stat-card .label{color:#afc0d5}
+    body[data-theme="dark"] .stat-card .number{color:#a0ccff}
+    body[data-theme="dark"] .records th,body[data-theme="dark"] .records td,body[data-theme="dark"] .setting{border-color:#364960}
+    body[data-theme="dark"] .records th{color:#a8b9d0}
+    body[data-theme="dark"] .level-btn,body[data-theme="dark"] .secondary,body[data-theme="dark"] .option-select,body[data-theme="dark"] .file-upload{background:#2b3c54;border-color:#435772;color:#e1ecfb}
+    body[data-theme="dark"] .level-btn span{color:#afc2dc}
+    body[data-theme="dark"] .setting span{color:#dce9f9}
+    body[data-theme="dark"] .win-title{color:#e2f1ff!important}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
   </style>
 </head>
 <body>
@@ -119,482 +181,28 @@
       </nav>
     </header>
     <section aria-label="Sudoku game">
-      <div class="gamebar"><div class="mode">Difficulty: <strong id="difficulty-display">Easy</strong></div><button class="new-game" id="new-button">New Game +</button></div>
-      <div class="game-meta"><div>Time: <strong id="timer">00:00</strong></div><div>Hints: <strong id="hints">0</strong></div></div>
+      <div class="gamebar"><div class="mode">Difficulty: <strong id="difficulty-display">Easy</strong><span id="daily-label" class="daily-label" hidden> · Daily Challenge</span></div><div class="game-actions"><button class="daily-button" id="daily-button">Daily</button><button class="new-game" id="new-button">New Game +</button></div></div>
+      <div class="game-meta"><div class="time-area">Time: <strong id="timer">00:00</strong> <button id="pause-button" class="pause-button" aria-label="Pause game" title="Pause game">Ⅱ</button></div><div>Hints: <strong id="hints">0</strong></div></div>
       <div class="sudoku-board" id="board" role="grid" aria-label="Sudoku board"></div>
       <div class="statusline"><span id="status" aria-live="polite">Select a square to begin</span><span class="counter" id="mistakes">Mistakes: 0</span></div>
       <div class="toolbar" aria-label="Game tools">
         <button class="tool" id="undo-button" aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5M4 9h10a6 6 0 1 1 0 12h-2"/></svg><span>Undo</span></button>
         <button class="tool" id="erase-button" aria-label="Erase"><svg viewBox="0 0 24 24"><path d="m20 13-6.8 7H7l-4-4 10-11a2 2 0 0 1 3 0l4 4a3 3 0 0 1 0 4ZM7 20h14"/></svg><span>Erase</span></button>
         <button class="tool" id="notes-button" aria-label="Notes mode" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m4 20 5-.9L21 7.1 16.9 3 4.9 15 4 20ZM14.5 5.5l4 4M4 20h16"/></svg><span>Notes</span></button>
+        <button class="tool" id="auto-notes-button" aria-label="Fill possible pencil marks"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM5 10h14M5 16h14M10 4v16M15 4v16"/></svg><span>Auto</span></button>
         <button class="tool" id="hint-button" aria-label="Show hint"><svg viewBox="0 0 24 24"><path d="M9 18h6m-5 3h4M8 14a7 7 0 1 1 8 0c-1.2.9-1.5 1.8-1.5 3h-5c0-1.2-.3-2.1-1.5-3Z"/></svg><span>Hint</span></button>
       </div>
       <div class="digits" id="digits" aria-label="Number pad"></div>
     </section>
-    <div class="footer">Free forever · Offline-ready · Your progress stays on this device</div>
+    <div class="footer">No ads · Works offline · Progress saved on this device</div>
   </main>
+  <div class="update-toast" id="update-toast" hidden>New version ready <button id="reload-button">Reload</button></div>
   <div class="modal-overlay" id="modal" hidden>
     <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
       <div class="dialog-top"><h2 id="dialog-title">Menu</h2><button class="close" id="close-modal" aria-label="Close dialog">×</button></div>
       <div id="modal-content"></div>
     </div>
   </div>
-<script>
-(() => {
-  "use strict";
-  const GAME_KEY = "just-sudoku-game-v1";
-  const STATS_KEY = "just-sudoku-stats-v1";
-  const PREFS_KEY = "just-sudoku-prefs-v1";
-  const DIFFICULTIES = { Easy: 43, Medium: 36, Hard: 30, Expert: 26 };
-  const FULL = 0x1ff;
-  const $ = id => document.getElementById(id);
-  const boardEl = $("board"), digitsEl = $("digits"), modalEl = $("modal");
-  const defaults = { showMistakes: true, highlightPeers: true, autoRemoveNotes: true };
-  const getStore = (key) => { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } };
-  const setStore = (key, data) => { try { localStorage.setItem(key, JSON.stringify(data)); } catch { /* Private browsing may disable storage */ } };
-  let prefs = { ...defaults, ...getStore(PREFS_KEY) };
-  let stats = { played: 0, solved: 0, best: {}, totalMs: 0, ...getStore(STATS_KEY) };
-  let notesMode = false;
-  let state = null;
-  let feedback = "Select a square to begin";
-
-  function shuffle(values) {
-    const items = values.slice();
-    for (let i = items.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [items[i], items[j]] = [items[j], items[i]];
-    }
-    return items;
-  }
-  const boxIndex = (r, c) => Math.floor(r / 3) * 3 + Math.floor(c / 3);
-  const popCount = n => { let count = 0; while (n) { n &= n - 1; count++; } return count; };
-
-  // Create a complete, valid 9x9 grid. Shuffle rows, columns, bands and digits.
-  function makeSolution() {
-    const digits = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    const rowOrder = shuffle([0, 1, 2]).flatMap(b => shuffle([0, 1, 2]).map(i => b * 3 + i));
-    const colOrder = shuffle([0, 1, 2]).flatMap(b => shuffle([0, 1, 2]).map(i => b * 3 + i));
-    const flip = Math.random() > .5;
-    const solution = [];
-    for (let r = 0; r < 9; r++) {
-      for (let c = 0; c < 9; c++) {
-        const row = flip ? colOrder[c] : rowOrder[r];
-        const col = flip ? rowOrder[r] : colOrder[c];
-        solution.push(digits[(row * 3 + Math.floor(row / 3) + col) % 9]);
-      }
-    }
-    return solution;
-  }
-
-  // Counts solutions, stopping after two. This guarantees generated puzzles have one solution.
-  function countSolutions(input) {
-    const grid = input.slice();
-    const rows = new Uint16Array(9), cols = new Uint16Array(9), boxes = new Uint16Array(9);
-    for (let i = 0; i < 81; i++) {
-      const value = grid[i];
-      if (!value) continue;
-      const r = Math.floor(i / 9), c = i % 9, b = boxIndex(r, c);
-      const bit = 1 << (value - 1);
-      if ((rows[r] | cols[c] | boxes[b]) & bit) return 0;
-      rows[r] |= bit; cols[c] |= bit; boxes[b] |= bit;
-    }
-    let solutions = 0;
-    function search() {
-      let best = -1, choices = 0, fewest = 10;
-      for (let i = 0; i < 81; i++) {
-        if (grid[i]) continue;
-        const r = Math.floor(i / 9), c = i % 9;
-        const possible = FULL & ~(rows[r] | cols[c] | boxes[boxIndex(r, c)]);
-        const n = popCount(possible);
-        if (!n) return;
-        if (n < fewest) { best = i; choices = possible; fewest = n; if (n === 1) break; }
-      }
-      if (best === -1) { solutions++; return; }
-      const r = Math.floor(best / 9), c = best % 9, b = boxIndex(r, c);
-      while (choices) {
-        const bit = choices & -choices;
-        choices ^= bit;
-        grid[best] = 32 - Math.clz32(bit);
-        rows[r] |= bit; cols[c] |= bit; boxes[b] |= bit;
-        search();
-        rows[r] ^= bit; cols[c] ^= bit; boxes[b] ^= bit;
-        grid[best] = 0;
-        if (solutions >= 2) return;
-      }
-    }
-    search();
-    return solutions;
-  }
-
-  function generatePuzzle(difficulty) {
-    const desired = DIFFICULTIES[difficulty];
-    let best = null;
-    // Retry to get close to the desired clue count. Clue counts are a rough difficulty
-    // approximation; puzzles are NOT formally graded by solving technique.
-    for (let attempt = 0; attempt < 4; attempt++) {
-      const solution = makeSolution();
-      const puzzle = solution.slice();
-      let remaining = 81;
-      for (const cell of shuffle(Array.from({ length: 81 }, (_, i) => i))) {
-        if (remaining <= desired) break;
-        const kept = puzzle[cell];
-        puzzle[cell] = 0;
-        if (countSolutions(puzzle) === 1) remaining--;
-        else puzzle[cell] = kept;
-      }
-      if (!best || remaining < best.remaining) best = { puzzle, solution, remaining };
-      if (remaining <= desired) break;
-    }
-    return best;
-  }
-
-  const elapsedNow = () => state ? state.elapsedMs + (state.running ? Math.max(0, Date.now() - state.startedAt) : 0) : 0;
-  function formatTime(ms) {
-    const seconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(seconds / 60);
-    return `${String(minutes).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
-  }
-  function pauseClock() {
-    if (!state || !state.running) return;
-    state.elapsedMs = elapsedNow();
-    state.running = false;
-    state.startedAt = null;
-    saveGame();
-  }
-  function resumeClock() {
-    if (!state || state.complete || !modalEl.hidden || state.running || document.hidden) return;
-    state.running = true;
-    state.startedAt = Date.now();
-    updateTimer();
-  }
-  function saveGame() {
-    if (!state) return;
-    setStore(GAME_KEY, { ...state, elapsedMs: elapsedNow(), startedAt: null, running: false, history: state.history.slice(-100) });
-  }
-  function loadGame() {
-    const saved = getStore(GAME_KEY);
-    if (!saved || !DIFFICULTIES[saved.difficulty] || !Array.isArray(saved.puzzle) || saved.puzzle.length !== 81 ||
-        !Array.isArray(saved.solution) || saved.solution.length !== 81 ||
-        !Array.isArray(saved.entries) || saved.entries.length !== 81 ||
-        !Array.isArray(saved.notes) || saved.notes.length !== 81) return null;
-    return { ...saved, selected: Number.isInteger(saved.selected) ? saved.selected : -1,
-      notes: saved.notes.map(n => Array.isArray(n) ? n : []),
-      history: Array.isArray(saved.history) ? saved.history : [],
-      elapsedMs: Number(saved.elapsedMs) || 0,
-      running: false, startedAt: null, complete: !!saved.complete };
-  }
-  function startGame(difficulty) {
-    pauseClock();
-    const { puzzle, solution } = generatePuzzle(difficulty);
-    state = { puzzle, solution, entries: puzzle.slice(), notes: Array.from({ length: 81 }, () => []),
-      selected: -1, difficulty, elapsedMs: 0, startedAt: null, running: false, mistakes: 0,
-      hints: 0, history: [], complete: false };
-    stats.played++;
-    setStore(STATS_KEY, stats);
-    notesMode = false;
-    feedback = "Select a square to begin";
-    modalEl.hidden = true;
-    render();
-    resumeClock();
-    saveGame();
-  }
-
-  function isPeer(a, b) {
-    if (a < 0 || b < 0) return false;
-    const ar = Math.floor(a / 9), ac = a % 9, br = Math.floor(b / 9), bc = b % 9;
-    return ar === br || ac === bc || boxIndex(ar, ac) === boxIndex(br, bc);
-  }
-  function message(text) { feedback = text; $("status").textContent = text; }
-  function renderBoard() {
-    const chosen = state.selected;
-    const value = chosen >= 0 ? state.entries[chosen] : 0;
-    const frag = document.createDocumentFragment();
-    for (let i = 0; i < 81; i++) {
-      const button = document.createElement("button");
-      const r = Math.floor(i / 9), c = i % 9;
-      button.type = "button";
-      button.className = "cell";
-      button.dataset.index = i;
-      button.setAttribute("role", "gridcell");
-      const isFixed = state.puzzle[i] !== 0;
-      if (isFixed) button.classList.add("fixed");
-      if (c === 2 || c === 5) button.classList.add("right-box");
-      if (r === 2 || r === 5) button.classList.add("bottom-box");
-      if (c === 8) button.classList.add("last-col");
-      if (r === 8) button.classList.add("last-row");
-      if (prefs.highlightPeers && chosen !== -1 && isPeer(i, chosen)) button.classList.add("peer");
-      if (value && state.entries[i] === value && i !== chosen) button.classList.add("same");
-      if (prefs.showMistakes && state.entries[i] && !isFixed && state.entries[i] !== state.solution[i]) button.classList.add("wrong");
-      if (i === chosen) { button.classList.add("selected"); button.setAttribute("aria-selected", "true"); }
-      if (state.entries[i]) {
-        button.textContent = String(state.entries[i]);
-        button.setAttribute("aria-label", `Row ${r + 1}, column ${c + 1}, ${state.entries[i]}${isFixed ? ", given" : ""}`);
-      } else {
-        button.setAttribute("aria-label", `Row ${r + 1}, column ${c + 1}, empty`);
-        if (state.notes[i].length) {
-          const notes = document.createElement("span");
-          notes.className = "notes";
-          for (let n = 1; n <= 9; n++) {
-            const tiny = document.createElement("span");
-            tiny.textContent = state.notes[i].includes(n) ? String(n) : "";
-            notes.appendChild(tiny);
-          }
-          button.appendChild(notes);
-        }
-      }
-      frag.appendChild(button);
-    }
-    boardEl.replaceChildren(frag);
-  }
-  function renderDigits() {
-    const frag = document.createDocumentFragment();
-    for (let n = 1; n <= 9; n++) {
-      const count = state.entries.filter(v => v === n).length;
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "digit";
-      button.dataset.number = n;
-      button.setAttribute("aria-label", `Enter ${n}`);
-      button.innerHTML = `${n}<small>${Math.max(0, 9 - count)}</small>`;
-      button.disabled = !!state.complete;
-      frag.appendChild(button);
-    }
-    digitsEl.replaceChildren(frag);
-  }
-  function updateTimer() { if (state) $("timer").textContent = formatTime(elapsedNow()); }
-  function render() {
-    if (!state) return;
-    $("difficulty-display").textContent = state.difficulty;
-    $("mistakes").textContent = `Mistakes: ${state.mistakes}`;
-    $("hints").textContent = state.hints;
-    $("notes-button").classList.toggle("active", notesMode);
-    $("notes-button").setAttribute("aria-pressed", String(notesMode));
-    $("undo-button").disabled = state.complete || state.history.length === 0;
-    $("erase-button").disabled = state.complete;
-    $("hint-button").disabled = state.complete;
-    $("status").textContent = feedback;
-    renderBoard();
-    renderDigits();
-    updateTimer();
-  }
-  function historySnapshot() {
-    state.history.push({ entries: state.entries.slice(), notes: state.notes.map(x => x.slice()),
-      mistakes: state.mistakes, hints: state.hints, selected: state.selected });
-    if (state.history.length > 100) state.history.shift();
-  }
-  function removePeerNotes(index, digit) {
-    if (!prefs.autoRemoveNotes) return;
-    for (let i = 0; i < 81; i++) {
-      if (isPeer(i, index)) state.notes[i] = state.notes[i].filter(n => n !== digit);
-    }
-  }
-  function selectedEditable() {
-    if (state.complete) return false;
-    if (state.selected === -1) { message("Tap a square first"); return false; }
-    if (state.puzzle[state.selected]) { message("That number cannot be changed"); return false; }
-    return true;
-  }
-  function enterNumber(number) {
-    if (!selectedEditable()) return;
-    const i = state.selected;
-    if (notesMode) {
-      if (state.entries[i]) { message("Erase the number before adding notes"); return; }
-      historySnapshot();
-      const old = state.notes[i];
-      state.notes[i] = old.includes(number) ? old.filter(n => n !== number) : [...old, number].sort();
-      message("Pencil notes updated");
-    } else {
-      if (state.entries[i] === number) return;
-      historySnapshot();
-      state.entries[i] = number;
-      state.notes[i] = [];
-      if (number !== state.solution[i]) {
-        state.mistakes++;
-        message("Try another number");
-      } else {
-        removePeerNotes(i, number);
-        message("Keep going!");
-      }
-    }
-    render();
-    saveGame();
-    if (state.entries.every((n, i) => n === state.solution[i])) finishGame();
-  }
-  function eraseSelected() {
-    if (!selectedEditable()) return;
-    const i = state.selected;
-    if (state.entries[i] === 0 && state.notes[i].length === 0) return;
-    historySnapshot();
-    state.entries[i] = 0;
-    state.notes[i] = [];
-    message("Square cleared");
-    render();
-    saveGame();
-  }
-  function undo() {
-    if (state.complete || !state.history.length) return;
-    const snapshot = state.history.pop();
-    state.entries = snapshot.entries;
-    state.notes = snapshot.notes;
-    state.mistakes = snapshot.mistakes;
-    state.hints = snapshot.hints;
-    state.selected = snapshot.selected;
-    message("Last move undone");
-    render();
-    saveGame();
-  }
-  function hint() {
-    if (state.complete) return;
-    let i = state.selected;
-    if (i < 0 || state.entries[i] === state.solution[i]) {
-      i = state.entries.findIndex((v, index) => v !== state.solution[index]);
-    }
-    if (i < 0) return;
-    historySnapshot();
-    state.selected = i;
-    state.entries[i] = state.solution[i];
-    state.notes[i] = [];
-    state.hints++;
-    removePeerNotes(i, state.solution[i]);
-    message("Hint filled in one square");
-    render();
-    saveGame();
-    if (state.entries.every((v, index) => v === state.solution[index])) finishGame();
-  }
-  function finishGame() {
-    pauseClock();
-    state.complete = true;
-    state.running = false;
-    stats.solved++;
-    stats.totalMs += state.elapsedMs;
-    const oldBest = stats.best[state.difficulty];
-    const newBest = oldBest == null || state.elapsedMs < oldBest;
-    if (newBest) stats.best[state.difficulty] = state.elapsedMs;
-    setStore(STATS_KEY, stats);
-    message("Puzzle completed!");
-    render();
-    saveGame();
-    showModal("won", newBest);
-  }
-
-  function showModal(type, newBest = false) {
-    pauseClock();
-    const body = $("modal-content");
-    const title = $("dialog-title");
-    if (type === "new") {
-      title.textContent = "New Game";
-      body.innerHTML = `<p>Choose your difficulty. Starting a new puzzle replaces the current one.</p>
-        <div class="level-list">${Object.entries(DIFFICULTIES).map(([name, clues]) =>
-          `<button class="level-btn" data-level="${name}"><strong>${name}</strong><span>${name === "Easy" ? "A relaxed warm-up" : name === "Medium" ? "A little more thinking" : name === "Hard" ? "A real challenge" : "For experienced players"} · About ${clues} starting numbers</span></button>`).join("")}</div>`;
-    } else if (type === "stats") {
-      title.textContent = "Statistics";
-      body.innerHTML = `<div class="stat-grid">
-        <div class="stat-card"><div class="number">${stats.played}</div><div class="label">Games started</div></div>
-        <div class="stat-card"><div class="number">${stats.solved}</div><div class="label">Puzzles solved</div></div>
-        </div><p style="font-weight:700;margin-bottom:4px;color:#354963">Personal bests</p>
-        <table class="records"><thead><tr><th>Difficulty</th><th>Best time</th></tr></thead><tbody>${Object.keys(DIFFICULTIES)
-          .map(d => `<tr><td>${d}</td><td>${stats.best[d] == null ? "—" : formatTime(stats.best[d])}</td></tr>`).join("")}</tbody></table>
-        <p style="margin-top:14px;font-size:12px">Statistics are saved only on this device.</p>`;
-    } else if (type === "settings") {
-      title.textContent = "Settings";
-      body.innerHTML = `<label class="setting"><span>Highlight related squares</span><input data-pref="highlightPeers" type="checkbox" ${prefs.highlightPeers ? "checked" : ""}></label>
-      <label class="setting"><span>Show incorrect numbers</span><input data-pref="showMistakes" type="checkbox" ${prefs.showMistakes ? "checked" : ""}></label>
-      <label class="setting"><span>Clear matching notes automatically</span><input data-pref="autoRemoveNotes" type="checkbox" ${prefs.autoRemoveNotes ? "checked" : ""}></label>
-      <p style="margin-top:16px;font-size:12px">No account, tracking, advertisements, or purchases.</p>`;
-    } else if (type === "won") {
-      title.textContent = "Nice work!";
-      body.innerHTML = `<div class="completed-badge">✓</div><p class="win-title">Sudoku solved!</p>
-        <p class="win-desc">${state.difficulty} · ${formatTime(state.elapsedMs)} · ${state.mistakes} mistakes · ${state.hints} hints${newBest ? "<br><strong style='color:#2d80cf'>New personal best!</strong>" : ""}</p>
-        <button class="primary" data-action="again">Play another puzzle</button>`;
-    }
-    modalEl.hidden = false;
-    $("close-modal").focus();
-  }
-  function closeModal() {
-    modalEl.hidden = true;
-    resumeClock();
-    updateTimer();
-  }
-  function selectCell(i) {
-    if (i < 0 || i >= 81) return;
-    state.selected = i;
-    feedback = state.puzzle[i] ? "Given number" : "Choose a number below";
-    renderBoard();
-    $("status").textContent = feedback;
-    saveGame();
-  }
-
-  boardEl.addEventListener("click", e => {
-    const cell = e.target.closest(".cell");
-    if (cell) selectCell(Number(cell.dataset.index));
-  });
-  digitsEl.addEventListener("click", e => {
-    const key = e.target.closest(".digit");
-    if (key) enterNumber(Number(key.dataset.number));
-  });
-  $("notes-button").addEventListener("click", () => {
-    if (state.complete) return;
-    notesMode = !notesMode;
-    message(notesMode ? "Pencil notes on" : "Pencil notes off");
-    render();
-  });
-  $("hint-button").addEventListener("click", hint);
-  $("erase-button").addEventListener("click", eraseSelected);
-  $("undo-button").addEventListener("click", undo);
-  $("new-button").addEventListener("click", () => showModal("new"));
-  $("stats-button").addEventListener("click", () => showModal("stats"));
-  $("settings-button").addEventListener("click", () => showModal("settings"));
-  $("close-modal").addEventListener("click", closeModal);
-  modalEl.addEventListener("click", e => { if (e.target === modalEl) closeModal(); });
-  $("modal-content").addEventListener("click", e => {
-    const level = e.target.closest("[data-level]");
-    if (level) startGame(level.dataset.level);
-    if (e.target.closest('[data-action="again"]')) showModal("new");
-  });
-  $("modal-content").addEventListener("change", e => {
-    const input = e.target.closest("[data-pref]");
-    if (!input) return;
-    prefs[input.dataset.pref] = input.checked;
-    setStore(PREFS_KEY, prefs);
-    renderBoard();
-  });
-  document.addEventListener("keydown", e => {
-    if (!modalEl.hidden) {
-      if (e.key === "Escape") closeModal();
-      return;
-    }
-    if (e.metaKey || e.ctrlKey) {
-      if (e.key.toLowerCase() === "z") { e.preventDefault(); undo(); }
-      return;
-    }
-    if (/^[1-9]$/.test(e.key)) { e.preventDefault(); enterNumber(Number(e.key)); }
-    else if (e.key === "Backspace" || e.key === "Delete" || e.key === "0") { e.preventDefault(); eraseSelected(); }
-    else if (e.key.toLowerCase() === "n") { $("notes-button").click(); }
-    else if (e.key.startsWith("Arrow")) {
-      e.preventDefault();
-      const i = state.selected < 0 ? 0 : state.selected;
-      const r = Math.floor(i / 9), c = i % 9;
-      selectCell(e.key === "ArrowUp" ? ((r + 8) % 9) * 9 + c :
-        e.key === "ArrowDown" ? ((r + 1) % 9) * 9 + c :
-        e.key === "ArrowLeft" ? r * 9 + (c + 8) % 9 : r * 9 + (c + 1) % 9);
-    }
-  });
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) pauseClock();
-    else resumeClock();
-  });
-  window.addEventListener("pagehide", pauseClock);
-  setInterval(updateTimer, 500);
-
-  state = loadGame();
-  if (!state) startGame("Easy");
-  else { feedback = state.complete ? "Puzzle completed!" : "Welcome back!"; render(); resumeClock(); }
-  if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js").catch(() => {});
-    });
-  }
-})();
-</script>
+<script src="./app.js" defer></script>
 </body>
 </html>
