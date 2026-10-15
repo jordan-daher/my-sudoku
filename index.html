@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f6f8fc">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Sudoku">
+  <meta name="description" content="A clean, completely free, ad-free Sudoku game that works offline.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+  <title>Sudoku — No Ads</title>
+  <style>
+    :root {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #24344e;
+      background: #f6f8fc;
+      font-synthesis: none;
+      -webkit-font-smoothing: antialiased;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; }
+    button { font: inherit; -webkit-tap-highlight-color: transparent; cursor: pointer; }
+    button:focus-visible { outline: 3px solid #6eaeff; outline-offset: 2px; }
+    button:disabled { opacity: .42; cursor: not-allowed; }
+    .app { width: min(100%, 490px); margin: 0 auto; padding: max(20px, env(safe-area-inset-top)) 18px max(25px, env(safe-area-inset-bottom)); }
+    .topbar, .gamebar, .game-meta, .toolbar, .statusline { display: flex; align-items: center; justify-content: space-between; }
+    .topbar { margin-bottom: 23px; }
+    .brand { display: flex; gap: 10px; align-items: center; }
+    .brand-icon { width: 43px; height: 43px; background: #2f79db; border-radius: 12px; padding: 8px; box-shadow: 0 4px 12px #2879db20; }
+    .brand-icon svg { width:100%; height:100%; display:block; }
+    h1 { margin: 0; font-size: 23px; font-weight: 800; letter-spacing: -.8px; }
+    .tagline { margin-top: 1px; font-size: 12px; color: #8291a8; }
+    .header-buttons { display: flex; gap: 7px; }
+    .icon-btn { width: 39px; height: 39px; display: grid; place-items: center; border: 1px solid #e1e8f1; border-radius: 11px; background: white; color: #486184; }
+    .icon-btn svg { width: 19px; height: 19px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .gamebar { margin: 0 1px 9px; }
+    .mode { font-size: 14px; color: #66809e; }
+    .mode strong { color: #2d78cb; font-weight: 750; }
+    .new-game { color: #2d78cb; font-size: 14px; font-weight: 750; padding: 5px 0 5px 10px; border: 0; background: none; }
+    .game-meta { margin: 0 1px 13px; font-size: 12px; color: #7c8ca1; font-weight: 600; }
+    .game-meta strong { color: #506480; font-variant-numeric: tabular-nums; }
+    .sudoku-board { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); grid-template-rows: repeat(9, minmax(0, 1fr)); width: 100%; aspect-ratio: 1; border: 2px solid #304766; background: white; box-shadow: 0 8px 27px #3c669212; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+    .cell { position: relative; min-width: 0; min-height: 0; border: 0; border-right: 1px solid #cad5e3; border-bottom: 1px solid #cad5e3; border-radius: 0; background: #fff; padding: 0; display: grid; place-items: center; color: #2e82d7; font-size: clamp(18px, 5.2vw, 28px); font-weight: 550; line-height: 1; }
+    .cell.right-box { border-right: 2px solid #304766; }
+    .cell.bottom-box { border-bottom: 2px solid #304766; }
+    .cell.last-col { border-right: 0; }
+    .cell.last-row { border-bottom: 0; }
+    .cell.fixed { color: #24344e; font-weight: 700; }
+    .cell.peer { background: #eef4fb; }
+    .cell.same { background: #dceafd; }
+    .cell.selected { background: #b8d9fc; box-shadow: inset 0 0 0 2px #5798e3; z-index: 1; }
+    .cell.wrong:not(.selected) { background: #ffe7e6; color: #d64e51; }
+    .cell.wrong.selected { color: #b82f34; }
+    .notes { width: 100%; height: 100%; padding: 2px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); color: #6c8bad; font-size: clamp(7px, 2vw, 10px); font-weight: 650; }
+    .notes span { display: grid; place-items: center; }
+    .statusline { min-height: 29px; margin: 8px 1px 4px; }
+    #status { color: #8695aa; font-size: 12px; }
+    .counter { color: #8695aa; font-size: 12px; font-weight: 600; }
+    .toolbar { margin-top: 7px; gap: 9px; }
+    .tool { display: flex; flex: 1; flex-direction: column; align-items: center; gap: 6px; padding: 8px 2px; border: 1px solid transparent; border-radius: 12px; background: none; color: #4b6d97; font-size: 12px; font-weight: 600; }
+    .tool svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+    .tool.active { background: #e2eefc; color: #206fd2; border-color: #a5c9f5; }
+    .tool .pill { position: absolute; margin-left: 32px; margin-top: -4px; border-radius: 7px; font-size: 9px; color: #2f79db; background: #e8f2ff; padding: 2px 4px; }
+    .tool-icon { position: relative; }
+    .digits { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 2px; margin-top: 6px; }
+    .digit { border: 0; border-radius: 10px; background: transparent; color: #2d78ca; min-width: 0; min-height: 62px; font-size: clamp(25px, 7vw, 36px); font-weight: 500; font-variant-numeric: tabular-nums; }
+    .digit:active, .digit:hover { background: #e4effc; }
+    .digit small { display: block; margin-top: -1px; color: #a0aec0; font-size: 10px; font-weight: 500; }
+    .footer { text-align: center; font-size: 11px; color: #a2adba; margin-top: 20px; }
+    .modal-overlay { position: fixed; z-index: 20; inset: 0; background: #1c304f7a; display: grid; place-items: center; padding: 20px; }
+    .modal-overlay[hidden] { display: none; }
+    .dialog { width: min(100%, 395px); max-height: min(690px, 85dvh); overflow: auto; background: #fff; border-radius: 21px; padding: 20px; box-shadow: 0 18px 45px #1b314a3f; }
+    .dialog-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 13px; }
+    .dialog h2 { font-size: 21px; margin: 0; letter-spacing: -.4px; }
+    .close { border: none; background: #f1f4f8; border-radius: 9px; width: 31px; height: 31px; color: #667d95; font-size: 22px; line-height: 1; }
+    .dialog p { font-size: 14px; color: #718096; line-height: 1.5; margin: 0 0 15px; }
+    .level-list { display: grid; gap: 9px; }
+    .level-btn { border: 1px solid #dce6f1; background: #fafcff; color: #233b58; border-radius: 12px; text-align: left; padding: 13px 15px; }
+    .level-btn strong { display: block; font-size: 15px; }
+    .level-btn span { font-size: 12px; color: #8899ad; display: block; margin-top: 3px; }
+    .level-btn:active, .level-btn:hover { border-color: #68a7ed; background: #edf6ff; }
+    .stat-grid { display:grid; grid-template-columns: 1fr 1fr; gap:9px; margin: 12px 0 17px; }
+    .stat-card { background: #f5f8fd; border-radius: 12px; padding: 13px; }
+    .stat-card .number { font-size: 22px; color:#2e78cb; font-weight: 800; margin-bottom: 2px; }
+    .stat-card .label { font-size: 11px; color: #8191a5; }
+    .records { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .records th, .records td { padding: 11px 3px; border-bottom:1px solid #ecf0f5; text-align:left; }
+    .records th { color:#7c8da0; font-weight: 600; }
+    .records td:last-child, .records th:last-child { text-align: right; }
+    .setting { display:flex; align-items:center; justify-content:space-between; padding: 15px 0; border-bottom:1px solid #e9eef5; gap:15px; font-size: 14px; }
+    .setting span { color: #34445b; font-weight: 600; }
+    .setting input { appearance: none; -webkit-appearance: none; border: 0; width: 43px; min-width:43px; height: 26px; background:#cad4e1; border-radius: 30px; position: relative; }
+    .setting input:checked { background:#2d80db; }
+    .setting input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height:20px; background: white; border-radius: 50%; transition: transform .16s ease; }
+    .setting input:checked::after { transform: translateX(17px); }
+    .primary { width:100%; padding: 13px 16px; border: none; background:#2f7fda; color:white; border-radius:12px; font-weight:750; font-size:15px; margin-top:15px; }
+    .completed-badge { border-radius:50%; width:70px; height:70px; margin:0 auto 13px; display:grid; place-items:center; background:#e6f4ec; color:#29a86f; font-size: 35px; font-weight:800; }
+    .win-title { text-align:center; font-size:24px !important; font-weight:800; color:#273953 !important; margin-bottom:8px !important; }
+    .win-desc { text-align:center; }
+    @media (min-width: 480px) { .app { padding-top: 36px; } .cell {font-size: 29px;} .digit{font-size:34px;} }
+    @media (max-width: 370px) { .app{padding-left:11px;padding-right:11px;} .toolbar{gap:0;} .topbar{margin-bottom:17px;} .digit{min-height:51px;} .footer{margin-top:9px;} }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 27 27"><path fill="#fff" d="M0 0h7v7H0zm10 0h7v7h-7zm10 0h7v7h-7zM0 10h7v7H0zm10 10h7v7h-7zM20 10h7v7h-7zM0 20h7v7H0zm20 0h7v7h-7z"/><path fill="#b9dcff" d="M10 10h7v7h-7z"/></svg>
+        </div>
+        <div><h1>Sudoku</h1><div class="tagline">No ads. Just Sudoku.</div></div>
+      </div>
+      <nav class="header-buttons" aria-label="App tools">
+        <button class="icon-btn" id="stats-button" aria-label="Statistics" title="Statistics"><svg viewBox="0 0 24 24"><path d="M3 3v18h18M8 17v-5m5 5V7m5 10V9"/></svg></button>
+        <button class="icon-btn" id="settings-button" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l-1.8 1.8a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6h-2.5a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-1.8-1.8a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H4v-2.5a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l1.8-1.8a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6h2.5a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l1.8 1.8a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1H21V14a1.7 1.7 0 0 0-1.6 1Z" transform="translate(-1 -1) scale(1.08)"/></svg></button>
+      </nav>
+    </header>
+    <section aria-label="Sudoku game">
+      <div class="gamebar"><div class="mode">Difficulty: <strong id="difficulty-display">Easy</strong></div><button class="new-game" id="new-button">New Game +</button></div>
+      <div class="game-meta"><div>Time: <strong id="timer">00:00</strong></div><div>Hints: <strong id="hints">0</strong></div></div>
+      <div class="sudoku-board" id="board" role="grid" aria-label="Sudoku board"></div>
+      <div class="statusline"><span id="status" aria-live="polite">Select a square to begin</span><span class="counter" id="mistakes">Mistakes: 0</span></div>
+      <div class="toolbar" aria-label="Game tools">
+        <button class="tool" id="undo-button" aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5M4 9h10a6 6 0 1 1 0 12h-2"/></svg><span>Undo</span></button>
+        <button class="tool" id="erase-button" aria-label="Erase"><svg viewBox="0 0 24 24"><path d="m20 13-6.8 7H7l-4-4 10-11a2 2 0 0 1 3 0l4 4a3 3 0 0 1 0 4ZM7 20h14"/></svg><span>Erase</span></button>
+        <button class="tool" id="notes-button" aria-label="Notes mode" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m4 20 5-.9L21 7.1 16.9 3 4.9 15 4 20ZM14.5 5.5l4 4M4 20h16"/></svg><span>Notes</span></button>
+        <button class="tool" id="hint-button" aria-label="Show hint"><svg viewBox="0 0 24 24"><path d="M9 18h6m-5 3h4M8 14a7 7 0 1 1 8 0c-1.2.9-1.5 1.8-1.5 3h-5c0-1.2-.3-2.1-1.5-3Z"/></svg><span>Hint</span></button>
+      </div>
+      <div class="digits" id="digits" aria-label="Number pad"></div>
+    </section>
+    <div class="footer">Free forever · Offline-ready · Your progress stays on this device</div>
+  </main>
+  <div class="modal-overlay" id="modal" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+      <div class="dialog-top"><h2 id="dialog-title">Menu</h2><button class="close" id="close-modal" aria-label="Close dialog">×</button></div>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+<script>
+(() => {
+  "use strict";
+  const GAME_KEY = "just-sudoku-game-v1";
+  const STATS_KEY = "just-sudoku-stats-v1";
+  const PREFS_KEY = "just-sudoku-prefs-v1";
+  const DIFFICULTIES = { Easy: 43, Medium: 36, Hard: 30, Expert: 26 };
+  const FULL = 0x1ff;
+  const $ = id => document.getElementById(id);
+  const boardEl = $("board"), digitsEl = $("digits"), modalEl = $("modal");
+  const defaults = { showMistakes: true, highlightPeers: true, autoRemoveNotes: true };
+  const getStore = (key) => { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } };
+  const setStore = (key, data) => { try { localStorage.setItem(key, JSON.stringify(data)); } catch { /* Private browsing may disable storage */ } };
+  let prefs = { ...defaults, ...getStore(PREFS_KEY) };
+  let stats = { played: 0, solved: 0, best: {}, totalMs: 0, ...getStore(STATS_KEY) };
+  let notesMode = false;
+  let state = null;
+  let feedback = "Select a square to begin";
+
+  function shuffle(values) {
+    const items = values.slice();
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    return items;
+  }
+  const boxIndex = (r, c) => Math.floor(r / 3) * 3 + Math.floor(c / 3);
+  const popCount = n => { let count = 0; while (n) { n &= n - 1; count++; } return count; };
+
+  // Create a complete, valid 9x9 grid. Shuffle rows, columns, bands and digits.
+  function makeSolution() {
+    const digits = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    const rowOrder = shuffle([0, 1, 2]).flatMap(b => shuffle([0, 1, 2]).map(i => b * 3 + i));
+    const colOrder = shuffle([0, 1, 2]).flatMap(b => shuffle([0, 1, 2]).map(i => b * 3 + i));
+    const flip = Math.random() > .5;
+    const solution = [];
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        const row = flip ? colOrder[c] : rowOrder[r];
+        const col = flip ? rowOrder[r] : colOrder[c];
+        solution.push(digits[(row * 3 + Math.floor(row / 3) + col) % 9]);
+      }
+    }
+    return solution;
+  }
+
+  // Counts solutions, stopping after two. This guarantees generated puzzles have one solution.
+  function countSolutions(input) {
+    const grid = input.slice();
+    const rows = new Uint16Array(9), cols = new Uint16Array(9), boxes = new Uint16Array(9);
+    for (let i = 0; i < 81; i++) {
+      const value = grid[i];
+      if (!value) continue;
+      const r = Math.floor(i / 9), c = i % 9, b = boxIndex(r, c);
+      const bit = 1 << (value - 1);
+      if ((rows[r] | cols[c] | boxes[b]) & bit) return 0;
+      rows[r] |= bit; cols[c] |= bit; boxes[b] |= bit;
+    }
+    let solutions = 0;
+    function search() {
+      let best = -1, choices = 0, fewest = 10;
+      for (let i = 0; i < 81; i++) {
+        if (grid[i]) continue;
+        const r = Math.floor(i / 9), c = i % 9;
+        const possible = FULL & ~(rows[r] | cols[c] | boxes[boxIndex(r, c)]);
+        const n = popCount(possible);
+        if (!n) return;
+        if (n < fewest) { best = i; choices = possible; fewest = n; if (n === 1) break; }
+      }
+      if (best === -1) { solutions++; return; }
+      const r = Math.floor(best / 9), c = best % 9, b = boxIndex(r, c);
+      while (choices) {
+        const bit = choices & -choices;
+        choices ^= bit;
+        grid[best] = 32 - Math.clz32(bit);
+        rows[r] |= bit; cols[c] |= bit; boxes[b] |= bit;
+        search();
+        rows[r] ^= bit; cols[c] ^= bit; boxes[b] ^= bit;
+        grid[best] = 0;
+        if (solutions >= 2) return;
+      }
+    }
+    search();
+    return solutions;
+  }
+
+  function generatePuzzle(difficulty) {
+    const desired = DIFFICULTIES[difficulty];
+    let best = null;
+    // Retry to get close to the desired clue count. Clue counts are a rough difficulty
+    // approximation; puzzles are NOT formally graded by solving technique.
+    for (let attempt = 0; attempt < 4; attempt++) {
+      const solution = makeSolution();
+      const puzzle = solution.slice();
+      let remaining = 81;
+      for (const cell of shuffle(Array.from({ length: 81 }, (_, i) => i))) {
+        if (remaining <= desired) break;
+        const kept = puzzle[cell];
+        puzzle[cell] = 0;
+        if (countSolutions(puzzle) === 1) remaining--;
+        else puzzle[cell] = kept;
+      }
+      if (!best || remaining < best.remaining) best = { puzzle, solution, remaining };
+      if (remaining <= desired) break;
+    }
+    return best;
+  }
+
+  const elapsedNow = () => state ? state.elapsedMs + (state.running ? Math.max(0, Date.now() - state.startedAt) : 0) : 0;
+  function formatTime(ms) {
+    const seconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(seconds / 60);
+    return `${String(minutes).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+  }
+  function pauseClock() {
+    if (!state || !state.running) return;
+    state.elapsedMs = elapsedNow();
+    state.running = false;
+    state.startedAt = null;
+    saveGame();
+  }
+  function resumeClock() {
+    if (!state || state.complete || !modalEl.hidden || state.running || document.hidden) return;
+    state.running = true;
+    state.startedAt = Date.now();
+    updateTimer();
+  }
+  function saveGame() {
+    if (!state) return;
+    setStore(GAME_KEY, { ...state, elapsedMs: elapsedNow(), startedAt: null, running: false, history: state.history.slice(-100) });
+  }
+  function loadGame() {
+    const saved = getStore(GAME_KEY);
+    if (!saved || !DIFFICULTIES[saved.difficulty] || !Array.isArray(saved.puzzle) || saved.puzzle.length !== 81 ||
+        !Array.isArray(saved.solution) || saved.solution.length !== 81 ||
+        !Array.isArray(saved.entries) || saved.entries.length !== 81 ||
+        !Array.isArray(saved.notes) || saved.notes.length !== 81) return null;
+    return { ...saved, selected: Number.isInteger(saved.selected) ? saved.selected : -1,
+      notes: saved.notes.map(n => Array.isArray(n) ? n : []),
+      history: Array.isArray(saved.history) ? saved.history : [],
+      elapsedMs: Number(saved.elapsedMs) || 0,
+      running: false, startedAt: null, complete: !!saved.complete };
+  }
+  function startGame(difficulty) {
+    pauseClock();
+    const { puzzle, solution } = generatePuzzle(difficulty);
+    state = { puzzle, solution, entries: puzzle.slice(), notes: Array.from({ length: 81 }, () => []),
+      selected: -1, difficulty, elapsedMs: 0, startedAt: null, running: false, mistakes: 0,
+      hints: 0, history: [], complete: false };
+    stats.played++;
+    setStore(STATS_KEY, stats);
+    notesMode = false;
+    feedback = "Select a square to begin";
+    modalEl.hidden = true;
+    render();
+    resumeClock();
+    saveGame();
+  }
+
+  function isPeer(a, b) {
+    if (a < 0 || b < 0) return false;
+    const ar = Math.floor(a / 9), ac = a % 9, br = Math.floor(b / 9), bc = b % 9;
+    return ar === br || ac === bc || boxIndex(ar, ac) === boxIndex(br, bc);
+  }
+  function message(text) { feedback = text; $("status").textContent = text; }
+  function renderBoard() {
+    const chosen = state.selected;
+    const value = chosen >= 0 ? state.entries[chosen] : 0;
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < 81; i++) {
+      const button = document.createElement("button");
+      const r = Math.floor(i / 9), c = i % 9;
+      button.type = "button";
+      button.className = "cell";
+      button.dataset.index = i;
+      button.setAttribute("role", "gridcell");
+      const isFixed = state.puzzle[i] !== 0;
+      if (isFixed) button.classList.add("fixed");
+      if (c === 2 || c === 5) button.classList.add("right-box");
+      if (r === 2 || r === 5) button.classList.add("bottom-box");
+      if (c === 8) button.classList.add("last-col");
+      if (r === 8) button.classList.add("last-row");
+      if (prefs.highlightPeers && chosen !== -1 && isPeer(i, chosen)) button.classList.add("peer");
+      if (value && state.entries[i] === value && i !== chosen) button.classList.add("same");
+      if (prefs.showMistakes && state.entries[i] && !isFixed && state.entries[i] !== state.solution[i]) button.classList.add("wrong");
+      if (i === chosen) { button.classList.add("selected"); button.setAttribute("aria-selected", "true"); }
+      if (state.entries[i]) {
+        button.textContent = String(state.entries[i]);
+        button.setAttribute("aria-label", `Row ${r + 1}, column ${c + 1}, ${state.entries[i]}${isFixed ? ", given" : ""}`);
+      } else {
+        button.setAttribute("aria-label", `Row ${r + 1}, column ${c + 1}, empty`);
+        if (state.notes[i].length) {
+          const notes = document.createElement("span");
+          notes.className = "notes";
+          for (let n = 1; n <= 9; n++) {
+            const tiny = document.createElement("span");
+            tiny.textContent = state.notes[i].includes(n) ? String(n) : "";
+            notes.appendChild(tiny);
+          }
+          button.appendChild(notes);
+        }
+      }
+      frag.appendChild(button);
+    }
+    boardEl.replaceChildren(frag);
+  }
+  function renderDigits() {
+    const frag = document.createDocumentFragment();
+    for (let n = 1; n <= 9; n++) {
+      const count = state.entries.filter(v => v === n).length;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "digit";
+      button.dataset.number = n;
+      button.setAttribute("aria-label", `Enter ${n}`);
+      button.innerHTML = `${n}<small>${Math.max(0, 9 - count)}</small>`;
+      button.disabled = !!state.complete;
+      frag.appendChild(button);
+    }
+    digitsEl.replaceChildren(frag);
+  }
+  function updateTimer() { if (state) $("timer").textContent = formatTime(elapsedNow()); }
+  function render() {
+    if (!state) return;
+    $("difficulty-display").textContent = state.difficulty;
+    $("mistakes").textContent = `Mistakes: ${state.mistakes}`;
+    $("hints").textContent = state.hints;
+    $("notes-button").classList.toggle("active", notesMode);
+    $("notes-button").setAttribute("aria-pressed", String(notesMode));
+    $("undo-button").disabled = state.complete || state.history.length === 0;
+    $("erase-button").disabled = state.complete;
+    $("hint-button").disabled = state.complete;
+    $("status").textContent = feedback;
+    renderBoard();
+    renderDigits();
+    updateTimer();
+  }
+  function historySnapshot() {
+    state.history.push({ entries: state.entries.slice(), notes: state.notes.map(x => x.slice()),
+      mistakes: state.mistakes, hints: state.hints, selected: state.selected });
+    if (state.history.length > 100) state.history.shift();
+  }
+  function removePeerNotes(index, digit) {
+    if (!prefs.autoRemoveNotes) return;
+    for (let i = 0; i < 81; i++) {
+      if (isPeer(i, index)) state.notes[i] = state.notes[i].filter(n => n !== digit);
+    }
+  }
+  function selectedEditable() {
+    if (state.complete) return false;
+    if (state.selected === -1) { message("Tap a square first"); return false; }
+    if (state.puzzle[state.selected]) { message("That number cannot be changed"); return false; }
+    return true;
+  }
+  function enterNumber(number) {
+    if (!selectedEditable()) return;
+    const i = state.selected;
+    if (notesMode) {
+      if (state.entries[i]) { message("Erase the number before adding notes"); return; }
+      historySnapshot();
+      const old = state.notes[i];
+      state.notes[i] = old.includes(number) ? old.filter(n => n !== number) : [...old, number].sort();
+      message("Pencil notes updated");
+    } else {
+      if (state.entries[i] === number) return;
+      historySnapshot();
+      state.entries[i] = number;
+      state.notes[i] = [];
+      if (number !== state.solution[i]) {
+        state.mistakes++;
+        message("Try another number");
+      } else {
+        removePeerNotes(i, number);
+        message("Keep going!");
+      }
+    }
+    render();
+    saveGame();
+    if (state.entries.every((n, i) => n === state.solution[i])) finishGame();
+  }
+  function eraseSelected() {
+    if (!selectedEditable()) return;
+    const i = state.selected;
+    if (state.entries[i] === 0 && state.notes[i].length === 0) return;
+    historySnapshot();
+    state.entries[i] = 0;
+    state.notes[i] = [];
+    message("Square cleared");
+    render();
+    saveGame();
+  }
+  function undo() {
+    if (state.complete || !state.history.length) return;
+    const snapshot = state.history.pop();
+    state.entries = snapshot.entries;
+    state.notes = snapshot.notes;
+    state.mistakes = snapshot.mistakes;
+    state.hints = snapshot.hints;
+    state.selected = snapshot.selected;
+    message("Last move undone");
+    render();
+    saveGame();
+  }
+  function hint() {
+    if (state.complete) return;
+    let i = state.selected;
+    if (i < 0 || state.entries[i] === state.solution[i]) {
+      i = state.entries.findIndex((v, index) => v !== state.solution[index]);
+    }
+    if (i < 0) return;
+    historySnapshot();
+    state.selected = i;
+    state.entries[i] = state.solution[i];
+    state.notes[i] = [];
+    state.hints++;
+    removePeerNotes(i, state.solution[i]);
+    message("Hint filled in one square");
+    render();
+    saveGame();
+    if (state.entries.every((v, index) => v === state.solution[index])) finishGame();
+  }
+  function finishGame() {
+    pauseClock();
+    state.complete = true;
+    state.running = false;
+    stats.solved++;
+    stats.totalMs += state.elapsedMs;
+    const oldBest = stats.best[state.difficulty];
+    const newBest = oldBest == null || state.elapsedMs < oldBest;
+    if (newBest) stats.best[state.difficulty] = state.elapsedMs;
+    setStore(STATS_KEY, stats);
+    message("Puzzle completed!");
+    render();
+    saveGame();
+    showModal("won", newBest);
+  }
+
+  function showModal(type, newBest = false) {
+    pauseClock();
+    const body = $("modal-content");
+    const title = $("dialog-title");
+    if (type === "new") {
+      title.textContent = "New Game";
+      body.innerHTML = `<p>Choose your difficulty. Starting a new puzzle replaces the current one.</p>
+        <div class="level-list">${Object.entries(DIFFICULTIES).map(([name, clues]) =>
+          `<button class="level-btn" data-level="${name}"><strong>${name}</strong><span>${name === "Easy" ? "A relaxed warm-up" : name === "Medium" ? "A little more thinking" : name === "Hard" ? "A real challenge" : "For experienced players"} · About ${clues} starting numbers</span></button>`).join("")}</div>`;
+    } else if (type === "stats") {
+      title.textContent = "Statistics";
+      body.innerHTML = `<div class="stat-grid">
+        <div class="stat-card"><div class="number">${stats.played}</div><div class="label">Games started</div></div>
+        <div class="stat-card"><div class="number">${stats.solved}</div><div class="label">Puzzles solved</div></div>
+        </div><p style="font-weight:700;margin-bottom:4px;color:#354963">Personal bests</p>
+        <table class="records"><thead><tr><th>Difficulty</th><th>Best time</th></tr></thead><tbody>${Object.keys(DIFFICULTIES)
+          .map(d => `<tr><td>${d}</td><td>${stats.best[d] == null ? "—" : formatTime(stats.best[d])}</td></tr>`).join("")}</tbody></table>
+        <p style="margin-top:14px;font-size:12px">Statistics are saved only on this device.</p>`;
+    } else if (type === "settings") {
+      title.textContent = "Settings";
+      body.innerHTML = `<label class="setting"><span>Highlight related squares</span><input data-pref="highlightPeers" type="checkbox" ${prefs.highlightPeers ? "checked" : ""}></label>
+      <label class="setting"><span>Show incorrect numbers</span><input data-pref="showMistakes" type="checkbox" ${prefs.showMistakes ? "checked" : ""}></label>
+      <label class="setting"><span>Clear matching notes automatically</span><input data-pref="autoRemoveNotes" type="checkbox" ${prefs.autoRemoveNotes ? "checked" : ""}></label>
+      <p style="margin-top:16px;font-size:12px">No account, tracking, advertisements, or purchases.</p>`;
+    } else if (type === "won") {
+      title.textContent = "Nice work!";
+      body.innerHTML = `<div class="completed-badge">✓</div><p class="win-title">Sudoku solved!</p>
+        <p class="win-desc">${state.difficulty} · ${formatTime(state.elapsedMs)} · ${state.mistakes} mistakes · ${state.hints} hints${newBest ? "<br><strong style='color:#2d80cf'>New personal best!</strong>" : ""}</p>
+        <button class="primary" data-action="again">Play another puzzle</button>`;
+    }
+    modalEl.hidden = false;
+    $("close-modal").focus();
+  }
+  function closeModal() {
+    modalEl.hidden = true;
+    resumeClock();
+    updateTimer();
+  }
+  function selectCell(i) {
+    if (i < 0 || i >= 81) return;
+    state.selected = i;
+    feedback = state.puzzle[i] ? "Given number" : "Choose a number below";
+    renderBoard();
+    $("status").textContent = feedback;
+    saveGame();
+  }
+
+  boardEl.addEventListener("click", e => {
+    const cell = e.target.closest(".cell");
+    if (cell) selectCell(Number(cell.dataset.index));
+  });
+  digitsEl.addEventListener("click", e => {
+    const key = e.target.closest(".digit");
+    if (key) enterNumber(Number(key.dataset.number));
+  });
+  $("notes-button").addEventListener("click", () => {
+    if (state.complete) return;
+    notesMode = !notesMode;
+    message(notesMode ? "Pencil notes on" : "Pencil notes off");
+    render();
+  });
+  $("hint-button").addEventListener("click", hint);
+  $("erase-button").addEventListener("click", eraseSelected);
+  $("undo-button").addEventListener("click", undo);
+  $("new-button").addEventListener("click", () => showModal("new"));
+  $("stats-button").addEventListener("click", () => showModal("stats"));
+  $("settings-button").addEventListener("click", () => showModal("settings"));
+  $("close-modal").addEventListener("click", closeModal);
+  modalEl.addEventListener("click", e => { if (e.target === modalEl) closeModal(); });
+  $("modal-content").addEventListener("click", e => {
+    const level = e.target.closest("[data-level]");
+    if (level) startGame(level.dataset.level);
+    if (e.target.closest('[data-action="again"]')) showModal("new");
+  });
+  $("modal-content").addEventListener("change", e => {
+    const input = e.target.closest("[data-pref]");
+    if (!input) return;
+    prefs[input.dataset.pref] = input.checked;
+    setStore(PREFS_KEY, prefs);
+    renderBoard();
+  });
+  document.addEventListener("keydown", e => {
+    if (!modalEl.hidden) {
+      if (e.key === "Escape") closeModal();
+      return;
+    }
+    if (e.metaKey || e.ctrlKey) {
+      if (e.key.toLowerCase() === "z") { e.preventDefault(); undo(); }
+      return;
+    }
+    if (/^[1-9]$/.test(e.key)) { e.preventDefault(); enterNumber(Number(e.key)); }
+    else if (e.key === "Backspace" || e.key === "Delete" || e.key === "0") { e.preventDefault(); eraseSelected(); }
+    else if (e.key.toLowerCase() === "n") { $("notes-button").click(); }
+    else if (e.key.startsWith("Arrow")) {
+      e.preventDefault();
+      const i = state.selected < 0 ? 0 : state.selected;
+      const r = Math.floor(i / 9), c = i % 9;
+      selectCell(e.key === "ArrowUp" ? ((r + 8) % 9) * 9 + c :
+        e.key === "ArrowDown" ? ((r + 1) % 9) * 9 + c :
+        e.key === "ArrowLeft" ? r * 9 + (c + 8) % 9 : r * 9 + (c + 1) % 9);
+    }
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) pauseClock();
+    else resumeClock();
+  });
+  window.addEventListener("pagehide", pauseClock);
+  setInterval(updateTimer, 500);
+
+  state = loadGame();
+  if (!state) startGame("Easy");
+  else { feedback = state.complete ? "Puzzle completed!" : "Welcome back!"; render(); resumeClock(); }
+  if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+    });
+  }
+})();
+</script>
+</body>
+</html>
