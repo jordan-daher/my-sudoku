@@ -1,5 +1,5 @@
-/* App shell cache v2. Keep previous users' saved games in localStorage. */
-const CACHE_NAME = 'just-sudoku-v2-20261015';
+/* Sudoku v3 offline-first app shell. */
+const CACHE_NAME = 'just-sudoku-v3-20261015';
 const FILES = [
   './', './index.html', './app.js', './manifest.webmanifest',
   './icon-192.png', './icon-512.png', './apple-touch-icon.png'
@@ -9,7 +9,7 @@ self.addEventListener('install', event => {
 });
 self.addEventListener('activate', event => {
   event.waitUntil(caches.keys().then(keys=>Promise.all(keys
-    .filter(key=>(key==='just-sudoku-v1'||key.startsWith('just-sudoku-v2-'))&&key!==CACHE_NAME)
+    .filter(key=>key.startsWith('just-sudoku-v')&&key!==CACHE_NAME)
     .map(key=>caches.delete(key)))).then(()=>self.clients.claim()));
 });
 self.addEventListener('fetch', event => {
